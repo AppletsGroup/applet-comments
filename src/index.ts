@@ -8,6 +8,10 @@ export interface Comment {
     name: string;
     avatarUrl: string;
   };
+  comments: {
+    data: Comment[],
+    hasNext: Boolean
+  }
   createdAt: string;
 }
 
@@ -107,7 +111,7 @@ class CommentPlugin {
     }
   }
 
-  createCommentItem(comment: Comment) {
+  createCommentItem(comment: Comment): HTMLLIElement {
     const commentItem = document.createElement('li');
     const commentText = document.createElement('p');
     const authorName = document.createElement('span');
@@ -143,6 +147,17 @@ class CommentPlugin {
     commentItem.appendChild(authorTime);
     commentItem.appendChild(replyButton);
     commentItem.appendChild(replyForm);
+  
+    // recursively render sub-comments
+    if (comment.comments && comment.comments.data.length > 0) {
+      const subCommentList = document.createElement('ul');
+      comment.comments.data.forEach((subComment) => {
+        const subCommentItem = this.createCommentItem(subComment);
+        subCommentList.appendChild(subCommentItem);
+      });
+      commentItem.appendChild(subCommentList);
+    }
+  
     commentItem.appendChild(replyList);
   
     // Set dark theme styles using Object.assign()
@@ -179,7 +194,6 @@ class CommentPlugin {
       backgroundColor: '#333',
       color: '#fff',
       borderRadius: '5px',
-      padding: '10px',
     });
     Object.assign(replyButton2.style, {
       backgroundColor: '#555',
@@ -196,6 +210,7 @@ class CommentPlugin {
   
     return commentItem;
   }
+  
   
 
   async createReply(commentId: number, replyText: string, replyList: HTMLUListElement): Promise<void> {
