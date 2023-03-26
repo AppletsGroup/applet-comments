@@ -35,6 +35,7 @@ class CommentPlugin {
       backgroundColor: '#222',
       padding: '20px',
       borderRadius: '10px',
+      display: 'flex'
     });
     Object.assign(commentInput.style, {
       backgroundColor: '#333',
@@ -70,13 +71,18 @@ class CommentPlugin {
   
     // Set container styles using Object.assign()
     Object.assign(this.container.style, {
-      backgroundColor: '#111',
-      padding: '20px',
+      padding: '2px',
       borderRadius: '10px',
     });
   
     this.container.appendChild(commentForm);
     this.container.appendChild(commentList);
+  }
+    
+  destory() {
+    while (this.container.firstChild) {
+      this.container.removeChild(this.container.firstChild);
+    }
   }
   
   async fetchComments(): Promise<Comment[]> {
