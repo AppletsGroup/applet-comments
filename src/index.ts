@@ -11,15 +11,6 @@ export interface Comment {
   createdAt: string;
 }
 
-export interface Reply {
-  id: number;
-  text: string;
-  author: {
-    name: string;
-  };
-  createdAt: string;
-}
-
 class CommentPlugin {
   postId: number;
   container: HTMLElement;
@@ -29,30 +20,61 @@ class CommentPlugin {
     this.container = container;
   }
 
-  init(): void {
-    const commentForm: HTMLFormElement = document.createElement('form');
-    const commentInput: HTMLTextAreaElement = document.createElement('textarea');
-    const commentButton: HTMLButtonElement = document.createElement('button');
-    const commentList: HTMLUListElement = document.createElement('ul');
-
-    commentForm.addEventListener('submit', (event: Event) => {
+  init() {
+    const commentForm = document.createElement('form');
+    const commentInput = document.createElement('textarea');
+    const commentButton = document.createElement('button');
+    const commentList = document.createElement('ul');
+  
+    // Set dark theme styles using Object.assign()
+    Object.assign(commentForm.style, {
+      backgroundColor: '#222',
+      padding: '20px',
+      borderRadius: '10px',
+    });
+    Object.assign(commentInput.style, {
+      backgroundColor: '#333',
+      color: '#fff',
+      borderRadius: '5px',
+    });
+    Object.assign(commentButton.style, {
+      backgroundColor: '#555',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '5px',
+      padding: '10px 20px',
+      marginTop: '10px',
+    });
+    Object.assign(commentList.style, {
+      listStyleType: 'none',
+      padding: '0',
+    });
+  
+    commentForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      const commentText: string = commentInput.value;
+      const commentText = commentInput.value;
       this.createComment(commentText);
     });
-
+  
     commentButton.innerText = 'Add Comment';
     commentForm.appendChild(commentInput);
     commentForm.appendChild(commentButton);
-
-    this.fetchComments().then((comments: Comment[]) => {
+  
+    this.fetchComments().then((comments) => {
       this.renderComments(comments, commentList);
     });
-
+  
+    // Set container styles using Object.assign()
+    Object.assign(this.container.style, {
+      backgroundColor: '#111',
+      padding: '20px',
+      borderRadius: '10px',
+    });
+  
     this.container.appendChild(commentForm);
     this.container.appendChild(commentList);
   }
-
+  
   async fetchComments(): Promise<Comment[]> {
     const comments = await queryPostComments({ page: 1, pageSize: 10, postId: this.postId, commentId: null })
 
@@ -70,7 +92,6 @@ class CommentPlugin {
   }
 
   renderComments(comments: Comment[], commentList: HTMLUListElement): void {
-    console.log(comments)
     comments.forEach((comment: Comment) => {
       const commentItem: HTMLLIElement = this.createCommentItem(comment);
       commentList.appendChild(commentItem);
@@ -86,29 +107,35 @@ class CommentPlugin {
     }
   }
 
-  createCommentItem(comment: Comment): HTMLLIElement {
-    const commentItem: HTMLLIElement = document.createElement('li');
-    const commentText: HTMLParagraphElement = document.createElement('p');
-    const authorName: HTMLSpanElement = document.createElement('span');
-    const authorTime: HTMLSpanElement = document.createElement('span');
-    const replyButton: HTMLButtonElement = document.createElement('button');
-    const replyForm: HTMLFormElement = document.createElement('form');
-    const replyInput: HTMLTextAreaElement = document.createElement('textarea');
-    const replyButton2: HTMLButtonElement = document.createElement('button');
-    const replyList: HTMLUListElement = document.createElement('ul');
-
+  createCommentItem(comment: Comment) {
+    const commentItem = document.createElement('li');
+    const commentText = document.createElement('p');
+    const authorName = document.createElement('span');
+    const authorTime = document.createElement('span');
+    const replyButton = document.createElement('button');
+    const replyForm = document.createElement('form');
+    const replyInput = document.createElement('textarea');
+    const replyButton2 = document.createElement('button');
+    const replyList = document.createElement('ul');
+  
     commentText.innerText = comment.content;
     authorName.innerText = comment.author.name;
     authorTime.innerText = new Date(comment.createdAt).toLocaleString();
     replyButton.innerText = 'Reply';
-
-    replyForm.addEventListener('submit', (event: Event) => {
-      event.preventDefault();
-      const replyText: string = replyInput.value;
-      this.createReply(comment.id, replyText, replyList);
+  
+    replyButton.addEventListener('click', () => {
+      replyForm.style.display = 'flex';
     });
-
+  
+    replyForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const replyText = replyInput.value;
+      this.createReply(comment.id, replyText, replyList);
+      replyForm.style.display = 'none';
+    });
+  
     replyButton2.innerText = 'Add Reply';
+    replyForm.style.display = 'none'; // hide the reply form by default
     replyForm.appendChild(replyInput);
     replyForm.appendChild(replyButton2);
     commentItem.appendChild(commentText);
@@ -117,9 +144,59 @@ class CommentPlugin {
     commentItem.appendChild(replyButton);
     commentItem.appendChild(replyForm);
     commentItem.appendChild(replyList);
-
+  
+    // Set dark theme styles using Object.assign()
+    Object.assign(commentItem.style, {
+      backgroundColor: '#444',
+      padding: '10px',
+      borderRadius: '5px',
+      marginBottom: '10px',
+    });
+    Object.assign(commentText.style, {
+      color: '#fff',
+      marginBottom: '5px',
+    });
+    Object.assign(authorName.style, {
+      color: '#ccc',
+      marginRight: '10px',
+    });
+    Object.assign(authorTime.style, {
+      color: '#ccc',
+    });
+    Object.assign(replyButton.style, {
+      backgroundColor: '#555',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '5px',
+      padding: '5px 10px',
+      marginRight: '10px',
+    });
+    Object.assign(replyForm.style, {
+      marginBottom: '10px',
+      alignItems: 'end'
+    });
+    Object.assign(replyInput.style, {
+      backgroundColor: '#333',
+      color: '#fff',
+      borderRadius: '5px',
+      padding: '10px',
+    });
+    Object.assign(replyButton2.style, {
+      backgroundColor: '#555',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '5px',
+      padding: '5px 10px',
+    });
+    Object.assign(replyList.style, {
+      listStyleType: 'none',
+      paddingLeft: '20px',
+      marginTop: '10px',
+    });
+  
     return commentItem;
   }
+  
 
   async createReply(commentId: number, replyText: string, replyList: HTMLUListElement): Promise<void> {
     const newReplyComment = await createComment({
@@ -131,12 +208,12 @@ class CommentPlugin {
     this.renderReply(newReplyComment, replyList);
   }
 
-  renderReply(reply: Reply, replyList: HTMLUListElement): void {
+  renderReply(reply: Comment, replyList: HTMLUListElement): void {
     const replyItem: HTMLLIElement = this.createReplyItem(reply);
     replyList.appendChild(replyItem);
   }
 
-  createReplyItem(reply: Reply): HTMLLIElement {
+  createReplyItem(reply: Comment): HTMLLIElement {
     const replyItem: HTMLLIElement = document.createElement('li');
     const replyText: HTMLParagraphElement = document.createElement('p');
     const authorName: HTMLSpanElement = document.createElement('span');
@@ -144,7 +221,7 @@ class CommentPlugin {
     authorName.innerText = reply.author.name;
     authorTime.innerText = new Date(reply.createdAt).toLocaleString();
 
-    replyText.innerText = reply.text;
+    replyText.innerText = reply.content;
     replyItem.appendChild(replyText);
     replyItem.appendChild(authorName);
     replyItem.appendChild(authorTime);
