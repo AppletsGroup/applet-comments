@@ -20,7 +20,6 @@ function App() {
   return (
     <div ref={containerRef} className='comments'></div>
   );
-
 }
 
 export default App

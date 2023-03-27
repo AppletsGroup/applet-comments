@@ -11,7 +11,7 @@ module.exports = {
     sourceType: 'module',
     project: ['./tsconfig.json']
   },
-  ignorePatterns: ['vite.config.ts'],
+  ignorePatterns: ['vite.config.ts', 'example/**'],
   rules: {
   }
 }
